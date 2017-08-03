@@ -5,7 +5,6 @@
      *
      * @note: common helper functions
      */
-
     'use strict'
 
     /**

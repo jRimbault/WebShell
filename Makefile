@@ -1,58 +1,58 @@
 # Concat all files into one exportable file
 
-# source files
-exec := src/exec.php
-style := src/style.css
-common := src/common.js
-overlay := src/Overlay.js
-history := src/History.js
-prompt := src/Prompt.js
-shell := src/Shell.js
-footer := src/footer.php
+MAKEFLAGS += --warn-undefined-variables
+SHELL := bash
+.SHELLFLAGS := -eu -o pipefail -c
+.DEFAULT_GOAL := all
+.DELETE_ON_ERROR:
+.SUFFIXES:
 
-# target files
 final := shell.php
-build := build
-outjs := $(build)/javascript.html
-outcss := $(build)/css.html
+rmcm := sed -ri ':a; s%(.*)/\*.*\*/%\1%; ta; /\/\*/ !b; N; ba'
 
-# concat everything
-concat : javascript css
-	@echo "Concatenate all into one file"
-	@cat $(exec) \
-		$(outcss) \
-		$(outjs) \
-		$(footer) > $(final)
-	@echo "  Done."
+.PHONY: clean check
+.INTERMEDIATE:
 
-# write the css html file
-css :
-	@echo "Concatenate CSS into HTML"
-	@mkdir -p $(build)
-	@echo "<style>" > $(outcss)
-	@cat $(style) >> $(outcss)
-	@echo "</style>" >> $(outcss)
-	@echo "  Done."
+build:
+	mkdir $@
 
 # write the javascript html file
-javascript :
-	@echo "Concatenate all JavaScript into HTML"
-	@mkdir -p $(build)
-	@echo "<script>" > $(outjs)
-	@cat $(common) \
-		$(overlay) \
-		$(history) \
-		$(prompt) \
-		$(shell) >> $(outjs)
-	@echo "</script>" >> $(outjs)
-	@echo "  Done."
+build/javascript.html: | build
+	@echo "- Concatenate all JavaScript into HTML"
+	@echo "<script>" > $@
+	cat \
+	src/common.js \
+	src/Overlay.js \
+	src/History.js \
+	src/Prompt.js \
+	src/Shell.js \
+	>> $@
+	@echo "</script>" >> $@
+	$(rmcm) $@
 
-# erase all build files
-clean :
-	@rm -f $(outjs)
-	@rm -f $(outcss)
-	@rmdir $(build)
+# write the css html file
+build/css.html: | build
+	@echo "- Concatenate CSS into HTML"
+	@echo "<style>" > $@
+	cat src/style.css >> $@
+	@echo "</style>" >> $@
+	$(rmcm) $@
 
-# erase all build files and final output file²
-purge : clean
-	@rm -f $(final)
+# concat everything
+all: | build build/javascript.html build/css.html
+	@echo "- Concatenate all into one file"
+	cat \
+	src/exec.php \
+	build/css.html \
+	build/javascript.html \
+	src/footer.php \
+	> $(final)
+	@echo "Done: $(final)"
+
+# check files, run tests
+check:
+
+# erase build files
+clean:
+	rm -rf build
+	rm $(final)

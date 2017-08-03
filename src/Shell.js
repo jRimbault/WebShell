@@ -165,25 +165,26 @@
         keyboard(event) {
             let code = event.keyCode
             switch (code) {
-                // Up Arrow
+                /** Up Arrow */
                 case 38:
                     event.preventDefault()
                     this.previousCommand()
                     break
-                // Down Arrow
+                /** Down Arrow */
                 case 40:
                     event.preventDefault()
                     this.nextCommand()
                     break
-                // Enter
+                /** Enter */
                 case 13:
                     event.preventDefault()
                     this.builtins()
                     break
+                /** Backspace */
                 case 8:
                     this.empty()
                     break
-                // Control
+                /** Enter */
                 case 17:
                     event.preventDefault()
                     break
