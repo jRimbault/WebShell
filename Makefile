@@ -10,8 +10,10 @@ SHELL := bash
 final := shell.php
 rmcm := sed -ri ':a; s%(.*)/\*.*\*/%\1%; ta; /\/\*/ !b; N; ba'
 
+IP := 127.0.0.1
+
 .PHONY: clean check
-.INTERMEDIATE: javascript.html css.html
+.INTERMEDIATE: javascript.html css.html ip.php
 
 # write the javascript html file
 javascript.html:
@@ -35,10 +37,16 @@ css.html:
 	@echo "</style>" >> $@
 	@$(rmcm) $@
 
+ip.php:
+	@echo "<?php" > $@
+	@echo "    \$$authorized = '$(IP)';" >> $@
+	@echo "?>" >> $@
+
 # concat everything
-all: javascript.html css.html
+all: javascript.html css.html ip.php
 	@echo "- Concatenate all into one file"
 	cat \
+	ip.php \
 	src/exec.php \
 	css.html \
 	javascript.html \

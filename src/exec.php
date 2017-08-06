@@ -2,12 +2,12 @@
     /**
      * @author:             jRimbault
      * @date:               2017-07-13
-     * @last modified date: 2017-07-18
+     * @last modified date: 2017-08-06
      *
      * @note: back-end php
      */
 
-    if ($_SERVER['REMOTE_ADDR'] !== '78.194.50.40') die('Hello World!');
+    if ($_SERVER['REMOTE_ADDR'] !== $authorized) die('Hello World!');
 
     if (isset($_POST['command'])) {
         header('Content-Type: application/json');
