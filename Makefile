@@ -11,13 +11,10 @@ final := shell.php
 rmcm := sed -ri ':a; s%(.*)/\*.*\*/%\1%; ta; /\/\*/ !b; N; ba'
 
 .PHONY: clean check
-.INTERMEDIATE:
-
-build:
-	mkdir $@
+.INTERMEDIATE: javascript.html css.html
 
 # write the javascript html file
-build/javascript.html: | build
+javascript.html:
 	@echo "- Concatenate all JavaScript into HTML"
 	@echo "<script>" > $@
 	cat \
@@ -28,23 +25,23 @@ build/javascript.html: | build
 	src/Shell.js \
 	>> $@
 	@echo "</script>" >> $@
-	$(rmcm) $@
+	@$(rmcm) $@
 
 # write the css html file
-build/css.html: | build
+css.html:
 	@echo "- Concatenate CSS into HTML"
 	@echo "<style>" > $@
 	cat src/style.css >> $@
 	@echo "</style>" >> $@
-	$(rmcm) $@
+	@$(rmcm) $@
 
 # concat everything
-all: | build build/javascript.html build/css.html
+all: javascript.html css.html
 	@echo "- Concatenate all into one file"
 	cat \
 	src/exec.php \
-	build/css.html \
-	build/javascript.html \
+	css.html \
+	javascript.html \
 	src/footer.php \
 	> $(final)
 	@echo "Done: $(final)"
@@ -54,5 +51,4 @@ check:
 
 # erase build files
 clean:
-	rm -rf build
 	rm $(final)
