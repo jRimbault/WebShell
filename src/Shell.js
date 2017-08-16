@@ -1,7 +1,7 @@
     /**
      * @author:             jRimbault
      * @date:               2017-07-13
-     * @last modified date: 2017-07-18
+     * @last modified date: 2017-08-16
      *
      * @note: Define the shell behavior
      */
@@ -104,10 +104,9 @@
          * the local history
          */
         command() {
-            let data = {
+            ajax(window.location.href, this.checkReturn, {
                 command: this.input.value
-            }
-            ajax(window.location.href, this.checkReturn, data)
+            })
             this.history.toStorage(this.input.value)
         }
 

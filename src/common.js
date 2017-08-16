@@ -5,7 +5,6 @@
      *
      * @note: common helper functions
      */
-    'use strict'
 
     /**
      * Helper functions/aliases
@@ -15,6 +14,10 @@
         els: s => [].slice.call(document.querySelectorAll(s) || []),
         li: (s,f) => document.addEventListener(s, f),
         ce:  s => document.createElement(s),
+        classAdd: (o,c) => o.classList.add(c),
+        classHas: (o,c) => o.classList.contains(c),
+        classRemove: (o,c) => o.classList.remove(c),
+        replaceNode: (o,n) => o.parentNode.replaceChild(n,o)
     }
 
     /**
